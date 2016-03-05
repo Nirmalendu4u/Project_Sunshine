@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -83,7 +84,7 @@ public class ForecastFragment extends Fragment {
                 "Sun"
         };
 
-        List<String> weekForecast = Arrays.asList(forecastArray);
+        List<String> weekForecast = new ArrayList<String>(Arrays.asList(forecastArray));
         forecastAdapter = new ArrayAdapter<String>(
                 getActivity(),
                 R.layout.list_item_forecast,
@@ -139,13 +140,10 @@ public class ForecastFragment extends Fragment {
             final String OWM_MIN = "min";
             final String OWM_DESCRIPTION = "main";
 
-            Log.e(LOG_TAG, "***********" + forecastJsonStr);
-
             JSONObject forecastJson = new JSONObject(forecastJsonStr);
             JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);
 
 
-            Log.e(LOG_TAG, "***********" + forecastJsonStr.toString());
             // OWM returns daily forecasts based upon the local time of the city that is being
             // asked for, which means that we need to know the GMT offset to translate this data
             // properly.
@@ -298,7 +296,7 @@ public class ForecastFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String[] forecastArray) {
-            Log.e(LOG_TAG, "****" + forecastArray.toString());
+
             if(forecastArray != null) {
                 List<String> weekForecast = Arrays.asList(forecastArray);
                 forecastAdapter.clear();
