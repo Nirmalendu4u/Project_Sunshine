@@ -20,11 +20,14 @@ import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.text.format.Time;
+import android.util.Log;
 
 /**
  * Defines table and column names for the weather database.
  */
 public class WeatherContract {
+
+    private static final String LOG_TAG = WeatherContract.class.getSimpleName();
 
     // The "Content authority" is a name for the entire content provider, similar to the
     // relationship between a domain name and its website.  A convenient string to use for the
@@ -51,6 +54,7 @@ public class WeatherContract {
         Time time = new Time();
         time.set(startDate);
         int julianDay = Time.getJulianDay(startDate, time.gmtoff);
+        Log.i(LOG_TAG, "OOOOOO" + Long.toString(julianDay));
         return time.setJulianDay(julianDay);
     }
 
@@ -81,6 +85,7 @@ public class WeatherContract {
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_LOCATION;
 
         public static Uri buildLocationUri(long id) {
+            Log.i(LOG_TAG, "OOOOOO" + ContentUris.withAppendedId(CONTENT_URI, id).toString());
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
     }
@@ -127,6 +132,7 @@ public class WeatherContract {
 
 
         public static Uri buildWeatherUri(long id) {
+            Log.i(LOG_TAG, "OOOOOO" + ContentUris.withAppendedId(CONTENT_URI, id).toString());
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
@@ -134,35 +140,45 @@ public class WeatherContract {
             Student: Fill in this buildWeatherLocation function
          */
         public static Uri buildWeatherLocation(String locationSetting) {
+            Log.i(LOG_TAG, "OOOOOO" + CONTENT_URI.buildUpon().appendPath(locationSetting).build().toString());
             return CONTENT_URI.buildUpon().appendPath(locationSetting).build();
         }
 
         public static Uri buildWeatherLocationWithStartDate(
                 String locationSetting, long startDate) {
             long normalizedDate = normalizeDate(startDate);
+            Log.i(LOG_TAG, "OOOOOO" + CONTENT_URI.buildUpon().appendPath(locationSetting)
+                    .appendQueryParameter(COLUMN_DATE, Long.toString(normalizedDate)).build().toString());
             return CONTENT_URI.buildUpon().appendPath(locationSetting)
                     .appendQueryParameter(COLUMN_DATE, Long.toString(normalizedDate)).build();
         }
 
         public static Uri buildWeatherLocationWithDate(String locationSetting, long date) {
+            Log.i(LOG_TAG, "OOOOOO" + CONTENT_URI.buildUpon().appendPath(locationSetting)
+                    .appendPath(Long.toString(normalizeDate(date))).build().toString());
             return CONTENT_URI.buildUpon().appendPath(locationSetting)
                     .appendPath(Long.toString(normalizeDate(date))).build();
         }
 
         public static String getLocationSettingFromUri(Uri uri) {
+            Log.i(LOG_TAG, "OOOOO" + uri.getPathSegments().get(1));
             return uri.getPathSegments().get(1);
         }
 
         public static long getDateFromUri(Uri uri) {
+            Log.i(LOG_TAG, "OOOOO" + Long.parseLong(uri.getPathSegments().get(2)));
             return Long.parseLong(uri.getPathSegments().get(2));
         }
 
         public static long getStartDateFromUri(Uri uri) {
             String dateString = uri.getQueryParameter(COLUMN_DATE);
-            if (null != dateString && dateString.length() > 0)
+            if (null != dateString && dateString.length() > 0) {
+                Log.i(LOG_TAG, "OOOOOO" + Long.parseLong(dateString));
                 return Long.parseLong(dateString);
-            else
+            }
+            else {
                 return 0;
+            }
         }
     }
 }
